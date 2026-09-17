@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classement des jeux du chat de Krayn</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <header>
+    <a class="eyebrow" href="https://www.twitch.tv/krayn_live" target="_blank" rel="noopener">Chaîne de Krayn</a>
+    <h1>Classement des jeux du chat de Krayn</h1>
+    <p>Tous les jeux joués par Krayn, notés par le chat</p>
+  </header>
+
+  <div class="controls">
+    <button data-sort="note" class="active">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 15.9l-5.6 3.2 1.4-6.3-4.8-4.3 6.4-.6L12 2z" fill="currentColor"/></svg>
+      Meilleure note
+    </button>
+    <button data-sort="date">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      Plus récent
+    </button>
+    <button data-sort="az">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9l3.5-5L11 9v10M4 14h7M15 4h5l-5 9h5M15 20l5-7"/></svg>
+      A - Z
+    </button>
+  </div>
+
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>Fait avec ♥ pour la communauté de Krayn</footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

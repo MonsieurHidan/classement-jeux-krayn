@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Classement des jeux du chat de Krayn</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <header>
+    <a class="eyebrow" href="index.html">← Retour au classement</a>
+    <h1>Ajouter un jeu</h1>
+    <p>Colle un lien Steam, mets la note du chat, le reste se remplit tout seul</p>
+  </header>
+
+  <main class="admin-main">
+    <section id="login-panel" class="panel">
+      <label for="password-input">Mot de passe admin</label>
+      <div class="row">
+        <input type="password" id="password-input" placeholder="••••••••" autocomplete="current-password" />
+        <button id="login-btn" class="primary-btn">Déverrouiller</button>
+      </div>
+      <p id="login-error" class="error-text"></p>
+    </section>
+
+    <section id="admin-panel" class="panel hidden">
+      <div class="form-grid">
+        <div class="field">
+          <label for="steam-url">Lien de la page Steam</label>
+          <div class="row">
+            <input type="text" id="steam-url" placeholder="https://store.steampowered.com/app/..." />
+            <button id="fetch-btn" class="primary-btn">Chercher</button>
+          </div>
+          <p id="fetch-error" class="error-text"></p>
+        </div>
+      </div>
+
+      <div id="preview" class="preview hidden">
+        <img id="preview-image" class="preview-image" alt="" />
+        <div class="preview-fields">
+          <div class="field">
+            <label for="field-titre">Titre</label>
+            <input type="text" id="field-titre" />
+          </div>
+          <div class="field">
+            <label for="field-note">Note du chat (sur 20)</label>
+            <input type="number" id="field-note" min="0" max="20" step="0.1" placeholder="14.8" />
+          </div>
+          <div class="field">
+            <label for="field-genre">Genre</label>
+            <input type="text" id="field-genre" />
+          </div>
+          <div class="field">
+            <label for="field-date">Date de sortie</label>
+            <input type="text" id="field-date" />
+          </div>
+          <div class="field field-wide">
+            <label for="field-description">Description</label>
+            <textarea id="field-description" rows="3"></textarea>
+          </div>
+        </div>
+        <button id="add-btn" class="primary-btn add-btn">Ajouter au classement</button>
+        <p id="add-error" class="error-text"></p>
+        <p id="add-success" class="success-text"></p>
+      </div>
+
+      <h2 class="list-title">Jeux déjà ajoutés</h2>
+      <div id="games-list" class="games-list"></div>
+    </section>
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

@@ -25,6 +25,12 @@ const gamesList = document.getElementById("games-list");
 
 let currentAppData = null;
 
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
 function getPassword() {
   return localStorage.getItem(STORAGE_KEY) || "";
 }
@@ -160,13 +166,13 @@ async function loadGamesList() {
   gamesList.innerHTML = games
     .map(
       (g) => `
-      <div class="game-row" data-id="${g.id}">
-        <img src="${g.image}" alt="" />
+      <div class="game-row" data-id="${escapeHtml(g.id)}">
+        <img src="${escapeHtml(g.image)}" alt="" />
         <div class="info">
-          <div class="title">${g.titre}</div>
-          <div class="sub">${g.note}/20 · ${g.genre || ""}</div>
+          <div class="title">${escapeHtml(g.titre)}</div>
+          <div class="sub">${Number(g.note)}/20 · ${escapeHtml(g.genre || "")}</div>
         </div>
-        <button class="delete-btn" data-id="${g.id}">Supprimer</button>
+        <button class="delete-btn" data-id="${escapeHtml(g.id)}">Supprimer</button>
       </div>
     `
     )

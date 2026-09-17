@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { SEED_GAMES } from "./_seed.js";
+import { checkPassword } from "./_auth.js";
 
 const kv = Redis.fromEnv();
 
@@ -14,11 +15,6 @@ function slugify(str) {
   );
 }
 
-function isAuthorized(req) {
-  const password = req.headers["x-admin-password"];
-  return Boolean(process.env.ADMIN_PASSWORD) && password === process.env.ADMIN_PASSWORD;
-}
-
 export default async function handler(req, res) {
   if (req.method === "GET") {
     const games = (await kv.get("games")) ?? SEED_GAMES;
@@ -26,7 +22,11 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "POST") {
-    if (!isAuthorized(req)) {
+    const { ok, locked } = await checkPassword(req);
+    if (locked) {
+      return res.status(429).json({ error: "Trop de tentatives, réessaie dans quelques minutes." });
+    }
+    if (!ok) {
       return res.status(401).json({ error: "Mot de passe incorrect." });
     }
     const body = req.body || {};
@@ -52,7 +52,11 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "DELETE") {
-    if (!isAuthorized(req)) {
+    const { ok, locked } = await checkPassword(req);
+    if (locked) {
+      return res.status(429).json({ error: "Trop de tentatives, réessaie dans quelques minutes." });
+    }
+    if (!ok) {
       return res.status(401).json({ error: "Mot de passe incorrect." });
     }
     const { id } = req.query;

@@ -1,5 +1,7 @@
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
 import { SEED_GAMES } from "./_seed.js";
+
+const kv = Redis.fromEnv();
 
 function slugify(str) {
   return (

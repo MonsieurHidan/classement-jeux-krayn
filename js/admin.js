@@ -18,12 +18,15 @@ const fieldGenre = document.getElementById("field-genre");
 const fieldDate = document.getElementById("field-date");
 const fieldDescription = document.getElementById("field-description");
 const addBtn = document.getElementById("add-btn");
+const cancelEditBtn = document.getElementById("cancel-edit-btn");
 const addError = document.getElementById("add-error");
 const addSuccess = document.getElementById("add-success");
 
 const gamesList = document.getElementById("games-list");
 
 let currentAppData = null;
+let editingId = null;
+let gamesCache = [];
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -110,6 +113,37 @@ fetchBtn.addEventListener("click", async () => {
   }
 });
 
+function enterEditMode(game) {
+  editingId = game.id;
+  currentAppData = { steamUrl: game.steamUrl, dateSortieRaw: game.dateSortieRaw };
+  steamUrlInput.value = game.steamUrl;
+  previewImage.src = game.image;
+  fieldTitre.value = game.titre;
+  fieldNote.value = game.note;
+  fieldGenre.value = game.genre;
+  fieldDate.value = game.dateSortie;
+  fieldDescription.value = game.description;
+  preview.classList.remove("hidden");
+  addBtn.textContent = "Enregistrer les modifications";
+  cancelEditBtn.classList.remove("hidden");
+  addError.textContent = "";
+  addSuccess.textContent = "";
+  preview.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function exitEditMode() {
+  editingId = null;
+  currentAppData = null;
+  steamUrlInput.value = "";
+  preview.classList.add("hidden");
+  addBtn.textContent = "Ajouter au classement";
+  cancelEditBtn.classList.add("hidden");
+  addError.textContent = "";
+  addSuccess.textContent = "";
+}
+
+cancelEditBtn.addEventListener("click", exitEditMode);
+
 addBtn.addEventListener("click", async () => {
   addError.textContent = "";
   addSuccess.textContent = "";
@@ -123,31 +157,31 @@ addBtn.addEventListener("click", async () => {
     return;
   }
 
+  const payload = {
+    titre: fieldTitre.value.trim(),
+    steamUrl: currentAppData?.steamUrl || steamUrlInput.value.trim(),
+    image: previewImage.src,
+    note,
+    genre: fieldGenre.value.trim(),
+    dateSortie: fieldDate.value.trim(),
+    dateSortieRaw: currentAppData?.dateSortieRaw || null,
+    description: fieldDescription.value.trim(),
+  };
+
   addBtn.disabled = true;
   try {
     const res = await fetch("/api/games", {
-      method: "POST",
+      method: editingId ? "PATCH" : "POST",
       headers: {
         "Content-Type": "application/json",
         "x-admin-password": getPassword(),
       },
-      body: JSON.stringify({
-        titre: fieldTitre.value.trim(),
-        steamUrl: currentAppData?.steamUrl || steamUrlInput.value.trim(),
-        image: previewImage.src,
-        note,
-        genre: fieldGenre.value.trim(),
-        dateSortie: fieldDate.value.trim(),
-        dateSortieRaw: currentAppData?.dateSortieRaw || null,
-        description: fieldDescription.value.trim(),
-      }),
+      body: JSON.stringify(editingId ? { id: editingId, ...payload } : payload),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Erreur lors de l'ajout.");
-    addSuccess.textContent = `"${data.titre}" ajouté au classement !`;
-    steamUrlInput.value = "";
-    preview.classList.add("hidden");
-    currentAppData = null;
+    if (!res.ok) throw new Error(data.error || "Erreur.");
+    addSuccess.textContent = editingId ? `"${data.titre}" modifié !` : `"${data.titre}" ajouté au classement !`;
+    exitEditMode();
     loadGamesList();
   } catch (err) {
     addError.textContent = err.message;
@@ -158,12 +192,12 @@ addBtn.addEventListener("click", async () => {
 
 async function loadGamesList() {
   const res = await fetch("/api/games");
-  const games = await res.json();
-  if (!games.length) {
+  gamesCache = await res.json();
+  if (!gamesCache.length) {
     gamesList.innerHTML = `<p class="error-text" style="color: var(--text-muted)">Aucun jeu pour le moment.</p>`;
     return;
   }
-  gamesList.innerHTML = games
+  gamesList.innerHTML = gamesCache
     .map(
       (g) => `
       <div class="game-row" data-id="${escapeHtml(g.id)}">
@@ -172,11 +206,19 @@ async function loadGamesList() {
           <div class="title">${escapeHtml(g.titre)}</div>
           <div class="sub">${Number(g.note)}/20 · ${escapeHtml(g.genre || "")}</div>
         </div>
+        <button class="edit-btn" data-id="${escapeHtml(g.id)}">Modifier</button>
         <button class="delete-btn" data-id="${escapeHtml(g.id)}">Supprimer</button>
       </div>
     `
     )
     .join("");
+
+  gamesList.querySelectorAll(".edit-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const game = gamesCache.find((g) => g.id === btn.dataset.id);
+      if (game) enterEditMode(game);
+    });
+  });
 
   gamesList.querySelectorAll(".delete-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -186,6 +228,7 @@ async function loadGamesList() {
         method: "DELETE",
         headers: { "x-admin-password": getPassword() },
       });
+      if (editingId === btn.dataset.id) exitEditMode();
       loadGamesList();
     });
   });

@@ -136,7 +136,7 @@ textarea {
 }
 
 .add-btn {
-  width: 100%;
+  flex: 1;
   margin-top: 6px;
   padding: 13px;
 }
@@ -189,10 +189,8 @@ textarea {
   font-size: 0.78rem;
 }
 
-.delete-btn {
-  background: rgba(255, 107, 129, 0.1);
-  border: 1px solid rgba(255, 107, 129, 0.35);
-  color: #ff6b81;
+.delete-btn,
+.edit-btn {
   padding: 7px 14px;
   border-radius: 8px;
   cursor: pointer;
@@ -202,8 +200,46 @@ textarea {
   transition: all 0.15s ease;
 }
 
+.delete-btn {
+  background: rgba(255, 107, 129, 0.1);
+  border: 1px solid rgba(255, 107, 129, 0.35);
+  color: #ff6b81;
+}
+
 .delete-btn:hover {
   background: rgba(255, 107, 129, 0.2);
+}
+
+.edit-btn {
+  background: rgba(124, 92, 255, 0.1);
+  border: 1px solid rgba(124, 92, 255, 0.35);
+  color: var(--accent);
+}
+
+.edit-btn:hover {
+  background: rgba(124, 92, 255, 0.2);
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ghost-btn:hover {
+  color: var(--text);
+  border-color: var(--card-border-hover);
+}
+
+.ghost-btn.hidden {
+  display: none;
 }
 
 @media (max-width: 560px) {

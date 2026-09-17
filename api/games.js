@@ -51,6 +51,42 @@ export default async function handler(req, res) {
     return res.status(201).json(newGame);
   }
 
+  if (req.method === "PATCH") {
+    const { ok, locked } = await checkPassword(req);
+    if (locked) {
+      return res.status(429).json({ error: "Trop de tentatives, réessaie dans quelques minutes." });
+    }
+    if (!ok) {
+      return res.status(401).json({ error: "Mot de passe incorrect." });
+    }
+    const body = req.body || {};
+    if (!body.id) {
+      return res.status(400).json({ error: "id manquant." });
+    }
+
+    const games = (await kv.get("games")) ?? SEED_GAMES;
+    const index = games.findIndex((g) => g.id === body.id);
+    if (index === -1) {
+      return res.status(404).json({ error: "Jeu introuvable." });
+    }
+
+    const updatedGame = {
+      ...games[index],
+      titre: body.titre ?? games[index].titre,
+      steamUrl: body.steamUrl ?? games[index].steamUrl,
+      image: body.image ?? games[index].image,
+      note: typeof body.note === "number" ? body.note : games[index].note,
+      genre: body.genre ?? games[index].genre,
+      dateSortie: body.dateSortie ?? games[index].dateSortie,
+      dateSortieRaw: body.dateSortieRaw ?? games[index].dateSortieRaw,
+      description: body.description ?? games[index].description,
+    };
+    const updated = [...games];
+    updated[index] = updatedGame;
+    await kv.set("games", updated);
+    return res.status(200).json(updatedGame);
+  }
+
   if (req.method === "DELETE") {
     const { ok, locked } = await checkPassword(req);
     if (locked) {
@@ -66,6 +102,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
 
-  res.setHeader("Allow", "GET, POST, DELETE");
+  res.setHeader("Allow", "GET, POST, PATCH, DELETE");
   res.status(405).end();
 }

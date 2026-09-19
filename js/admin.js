@@ -9,11 +9,13 @@ const loginError = document.getElementById("login-error");
 const steamUrlInput = document.getElementById("steam-url");
 const fetchBtn = document.getElementById("fetch-btn");
 const fetchError = document.getElementById("fetch-error");
+const manualBtn = document.getElementById("manual-btn");
 
 const preview = document.getElementById("preview");
 const previewImage = document.getElementById("preview-image");
 const fieldTitre = document.getElementById("field-titre");
 const fieldNote = document.getElementById("field-note");
+const fieldImage = document.getElementById("field-image");
 const fieldGenre = document.getElementById("field-genre");
 const fieldDate = document.getElementById("field-date");
 const fieldDescription = document.getElementById("field-description");
@@ -32,6 +34,16 @@ function escapeHtml(str) {
   const div = document.createElement("div");
   div.textContent = str ?? "";
   return div.innerHTML;
+}
+
+function setPreviewImage(url) {
+  if (url) {
+    previewImage.src = url;
+    previewImage.style.visibility = "visible";
+  } else {
+    previewImage.removeAttribute("src");
+    previewImage.style.visibility = "hidden";
+  }
 }
 
 function getPassword() {
@@ -95,8 +107,9 @@ fetchBtn.addEventListener("click", async () => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Erreur");
     currentAppData = data;
-    previewImage.src = data.image;
+    setPreviewImage(data.image);
     fieldTitre.value = data.titre;
+    fieldImage.value = data.image;
     fieldGenre.value = data.genre;
     fieldDate.value = data.dateSortie;
     fieldDescription.value = data.description;
@@ -109,17 +122,38 @@ fetchBtn.addEventListener("click", async () => {
     preview.classList.add("hidden");
   } finally {
     fetchBtn.disabled = false;
-    fetchBtn.textContent = "Chercher";
+    fetchBtn.textContent = "Chercher sur Steam";
   }
+});
+
+manualBtn.addEventListener("click", () => {
+  fetchError.textContent = "";
+  addError.textContent = "";
+  addSuccess.textContent = "";
+  currentAppData = null;
+  setPreviewImage("");
+  fieldTitre.value = "";
+  fieldImage.value = "";
+  fieldGenre.value = "";
+  fieldDate.value = "";
+  fieldDescription.value = "";
+  fieldNote.value = "";
+  preview.classList.remove("hidden");
+  fieldTitre.focus();
+});
+
+fieldImage.addEventListener("input", () => {
+  setPreviewImage(fieldImage.value.trim());
 });
 
 function enterEditMode(game) {
   editingId = game.id;
   currentAppData = { steamUrl: game.steamUrl, dateSortieRaw: game.dateSortieRaw };
   steamUrlInput.value = game.steamUrl;
-  previewImage.src = game.image;
+  setPreviewImage(game.image);
   fieldTitre.value = game.titre;
   fieldNote.value = game.note;
+  fieldImage.value = game.image;
   fieldGenre.value = game.genre;
   fieldDate.value = game.dateSortie;
   fieldDescription.value = game.description;
@@ -159,8 +193,8 @@ addBtn.addEventListener("click", async () => {
 
   const payload = {
     titre: fieldTitre.value.trim(),
-    steamUrl: currentAppData?.steamUrl || steamUrlInput.value.trim(),
-    image: previewImage.src,
+    steamUrl: steamUrlInput.value.trim(),
+    image: fieldImage.value.trim(),
     note,
     genre: fieldGenre.value.trim(),
     dateSortie: fieldDate.value.trim(),

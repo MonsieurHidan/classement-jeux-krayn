@@ -34,12 +34,13 @@
     <section id="admin-panel" class="panel hidden">
       <div class="form-grid">
         <div class="field">
-          <label for="steam-url">Lien de la page Steam</label>
+          <label for="steam-url">Lien (Steam, site officiel, wiki... facultatif)</label>
           <div class="row">
             <input type="text" id="steam-url" placeholder="https://store.steampowered.com/app/..." />
-            <button id="fetch-btn" class="primary-btn">Chercher</button>
+            <button id="fetch-btn" class="primary-btn">Chercher sur Steam</button>
           </div>
           <p id="fetch-error" class="error-text"></p>
+          <button id="manual-btn" class="ghost-btn">Pas sur Steam ? Remplir manuellement</button>
         </div>
       </div>
 
@@ -53,6 +54,10 @@
           <div class="field">
             <label for="field-note">Note du chat (sur 20)</label>
             <input type="number" id="field-note" min="0" max="20" step="0.1" placeholder="14.8" />
+          </div>
+          <div class="field field-wide">
+            <label for="field-image">Image (lien direct vers une image)</label>
+            <input type="text" id="field-image" placeholder="https://..." />
           </div>
           <div class="field">
             <label for="field-genre">Genre</label>

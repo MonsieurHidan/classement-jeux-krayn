@@ -30,15 +30,15 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "Mot de passe incorrect." });
     }
     const body = req.body || {};
-    if (!body.titre || !body.steamUrl || typeof body.note !== "number") {
-      return res.status(400).json({ error: "Titre, lien Steam et note sont requis." });
+    if (!body.titre || typeof body.note !== "number") {
+      return res.status(400).json({ error: "Titre et note sont requis." });
     }
 
     const games = (await kv.get("games")) ?? SEED_GAMES;
     const newGame = {
       id: `${slugify(body.titre)}-${Date.now().toString(36)}`,
       titre: body.titre,
-      steamUrl: body.steamUrl,
+      steamUrl: body.steamUrl || "",
       image: body.image || "",
       note: body.note,
       genre: body.genre || "",

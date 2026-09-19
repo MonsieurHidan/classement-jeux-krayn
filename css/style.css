@@ -229,6 +229,17 @@ main {
   display: block;
 }
 
+.cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.25), rgba(34, 211, 168, 0.2));
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .cover-fade {
   position: absolute;
   inset: auto 0 0 0;

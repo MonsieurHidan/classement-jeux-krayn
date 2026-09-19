@@ -21,6 +21,14 @@ function rankClass(index) {
   return "";
 }
 
+function linkLabel(url) {
+  try {
+    return new URL(url).host.includes("steampowered") ? "Voir sur Steam" : "Plus d'infos";
+  } catch {
+    return "Plus d'infos";
+  }
+}
+
 function render(games) {
   if (!games.length) {
     grid.innerHTML = `<p class="empty">Aucun jeu ajouté pour le moment.</p>`;
@@ -32,7 +40,11 @@ function render(games) {
       <article class="card">
         <div class="rank ${rankClass(i)}">${i + 1}</div>
         <div class="cover-wrap">
-          <img class="cover" src="${escapeHtml(game.image)}" alt="${escapeHtml(game.titre)}" loading="lazy" />
+          ${
+            game.image
+              ? `<img class="cover" src="${escapeHtml(game.image)}" alt="${escapeHtml(game.titre)}" loading="lazy" />`
+              : `<div class="cover cover-placeholder">${escapeHtml((game.titre || "?").charAt(0).toUpperCase())}</div>`
+          }
           <div class="cover-fade"></div>
         </div>
         <div class="card-body">
@@ -44,7 +56,11 @@ function render(games) {
           ${game.description ? `<p class="description">${escapeHtml(game.description)}</p>` : ""}
           <div class="card-footer">
             <div class="note ${noteClass(game.note)}">${Number(game.note).toFixed(1)}<small>/20 chat</small></div>
-            <a class="steam-link" href="${escapeHtml(game.steamUrl)}" target="_blank" rel="noopener">Voir sur Steam</a>
+            ${
+              game.steamUrl
+                ? `<a class="steam-link" href="${escapeHtml(game.steamUrl)}" target="_blank" rel="noopener">${linkLabel(game.steamUrl)}</a>`
+                : ""
+            }
           </div>
         </div>
       </article>

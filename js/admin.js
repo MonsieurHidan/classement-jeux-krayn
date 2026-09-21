@@ -22,6 +22,7 @@ const fieldImage = document.getElementById("field-image");
 const fieldGenre = document.getElementById("field-genre");
 const fieldDate = document.getElementById("field-date");
 const fieldDescription = document.getElementById("field-description");
+const fieldVod = document.getElementById("field-vod");
 const addBtn = document.getElementById("add-btn");
 const cancelEditBtn = document.getElementById("cancel-edit-btn");
 const addError = document.getElementById("add-error");
@@ -166,6 +167,7 @@ manualBtn.addEventListener("click", () => {
   fieldGenre.value = "";
   fieldDate.value = "";
   fieldDescription.value = "";
+  fieldVod.value = "";
   fieldNote.value = "";
   preview.classList.remove("hidden");
   fieldTitre.focus();
@@ -188,6 +190,7 @@ function enterEditMode(game) {
   fieldGenre.value = game.genre;
   fieldDate.value = game.dateSortie;
   fieldDescription.value = game.description;
+  fieldVod.value = game.vodUrl || "";
   preview.classList.remove("hidden");
   addBtn.textContent = "Enregistrer les modifications";
   cancelEditBtn.classList.remove("hidden");
@@ -233,6 +236,7 @@ addBtn.addEventListener("click", async () => {
     dateSortie: fieldDate.value.trim(),
     dateSortieRaw: currentAppData?.dateSortieRaw || null,
     description: fieldDescription.value.trim(),
+    vodUrl: fieldVod.value.trim(),
   };
 
   addBtn.disabled = true;

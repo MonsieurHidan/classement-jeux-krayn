@@ -21,11 +21,18 @@ function rankClass(index) {
   return "";
 }
 
-function linkLabel(url) {
+const STEAM_ICON = `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="15" r="2.2" fill="currentColor"/><path d="M9 15L14 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="15" cy="9" r="2.4" stroke="currentColor" stroke-width="1.6"/></svg>`;
+const YOUTUBE_ICON = `<svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="currentColor"/><path d="M10 8.7L16 12L10 15.3V8.7Z" fill="#fff"/></svg>`;
+const EXTERNAL_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4L10 14M18 13v5a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h5"/></svg>`;
+
+function linkMeta(url) {
   try {
-    return new URL(url).host.includes("steampowered") ? "Voir sur Steam" : "Plus d'infos";
+    const isSteam = new URL(url).host.includes("steampowered");
+    return isSteam
+      ? { className: "link-steam", icon: STEAM_ICON, title: "Voir sur Steam" }
+      : { className: "link-external", icon: EXTERNAL_ICON, title: "Plus d'infos" };
   } catch {
-    return "Plus d'infos";
+    return { className: "link-external", icon: EXTERNAL_ICON, title: "Plus d'infos" };
   }
 }
 
@@ -61,11 +68,21 @@ function render(games) {
           ${game.description ? `<p class="description">${escapeHtml(game.description)}</p>` : ""}
           <div class="card-footer">
             <div class="note ${isBest ? "note-best" : ""}" style="${isBest ? "" : `color: ${noteColor(game.note)}`}">${isBest ? "★ " : ""}${Number(game.note).toFixed(1)}<small>/20 chat</small></div>
-            ${
-              game.steamUrl
-                ? `<a class="steam-link" href="${escapeHtml(game.steamUrl)}" target="_blank" rel="noopener">${linkLabel(game.steamUrl)}</a>`
-                : ""
-            }
+            <div class="links">
+              ${
+                game.steamUrl
+                  ? (() => {
+                      const link = linkMeta(game.steamUrl);
+                      return `<a class="link-btn ${link.className}" href="${escapeHtml(game.steamUrl)}" target="_blank" rel="noopener" title="${link.title}" aria-label="${link.title}">${link.icon}</a>`;
+                    })()
+                  : ""
+              }
+              ${
+                game.vodUrl
+                  ? `<a class="link-btn link-youtube" href="${escapeHtml(game.vodUrl)}" target="_blank" rel="noopener" title="Voir la VOD" aria-label="Voir la VOD">${YOUTUBE_ICON}</a>`
+                  : ""
+              }
+            </div>
           </div>
         </div>
       </article>

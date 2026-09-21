@@ -54,6 +54,7 @@ export default async function handler(req, res) {
       dateSortie: body.dateSortie || "",
       dateSortieRaw: body.dateSortieRaw || null,
       description: body.description || "",
+      vodUrl: body.vodUrl || "",
     };
     const updated = [...games, newGame];
     await kv.set("games", updated);
@@ -90,6 +91,7 @@ export default async function handler(req, res) {
       dateSortie: body.dateSortie ?? games[index].dateSortie,
       dateSortieRaw: body.dateSortieRaw ?? games[index].dateSortieRaw,
       description: body.description ?? games[index].description,
+      vodUrl: body.vodUrl ?? games[index].vodUrl,
     };
     const updated = [...games];
     updated[index] = updatedGame;

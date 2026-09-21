@@ -325,8 +325,7 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  gap: 6px;
   border-radius: 10px;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -335,10 +334,23 @@ main {
 .link-btn svg {
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
 }
 
 .link-btn:hover {
   transform: translateY(-1px);
+}
+
+.link-icon-only {
+  width: 38px;
+  height: 38px;
+}
+
+.link-btn.with-text {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .link-steam {

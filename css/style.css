@@ -311,9 +311,10 @@ main {
   font-size: 0.68rem;
 }
 
-.note.high { color: var(--accent-2); }
-.note.mid { color: var(--gold); }
-.note.low { color: #ff6b81; }
+.note-best {
+  color: var(--gold) !important;
+  text-shadow: 0 0 14px rgba(245, 197, 66, 0.5);
+}
 
 .steam-link {
   display: inline-flex;

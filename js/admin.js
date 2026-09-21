@@ -12,7 +12,10 @@ const fetchError = document.getElementById("fetch-error");
 const manualBtn = document.getElementById("manual-btn");
 
 const preview = document.getElementById("preview");
+const imagePicker = document.getElementById("image-picker");
 const previewImage = document.getElementById("preview-image");
+const focalMarker = document.getElementById("focal-marker");
+const resetPositionBtn = document.getElementById("reset-position-btn");
 const fieldTitre = document.getElementById("field-titre");
 const fieldNote = document.getElementById("field-note");
 const fieldImage = document.getElementById("field-image");
@@ -29,6 +32,7 @@ const gamesList = document.getElementById("games-list");
 let currentAppData = null;
 let editingId = null;
 let gamesCache = [];
+let currentImagePosition = "50% 50%";
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -45,6 +49,29 @@ function setPreviewImage(url) {
     previewImage.style.visibility = "hidden";
   }
 }
+
+function setImagePosition(pos) {
+  currentImagePosition = pos;
+  previewImage.style.objectPosition = pos;
+  const [x, y] = pos.split(" ").map(parseFloat);
+  if (!Number.isNaN(x) && !Number.isNaN(y)) {
+    focalMarker.style.left = `${x}%`;
+    focalMarker.style.top = `${y}%`;
+    focalMarker.classList.remove("hidden");
+  } else {
+    focalMarker.classList.add("hidden");
+  }
+}
+
+imagePicker.addEventListener("click", (e) => {
+  if (!previewImage.getAttribute("src")) return;
+  const rect = imagePicker.getBoundingClientRect();
+  const x = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
+  const y = Math.max(0, Math.min(100, Math.round(((e.clientY - rect.top) / rect.height) * 100)));
+  setImagePosition(`${x}% ${y}%`);
+});
+
+resetPositionBtn.addEventListener("click", () => setImagePosition("50% 50%"));
 
 function getPassword() {
   return localStorage.getItem(STORAGE_KEY) || "";
@@ -108,6 +135,7 @@ fetchBtn.addEventListener("click", async () => {
     if (!res.ok) throw new Error(data.error || "Erreur");
     currentAppData = data;
     setPreviewImage(data.image);
+    setImagePosition("50% 50%");
     fieldTitre.value = data.titre;
     fieldImage.value = data.image;
     fieldGenre.value = data.genre;
@@ -132,6 +160,7 @@ manualBtn.addEventListener("click", () => {
   addSuccess.textContent = "";
   currentAppData = null;
   setPreviewImage("");
+  setImagePosition("50% 50%");
   fieldTitre.value = "";
   fieldImage.value = "";
   fieldGenre.value = "";
@@ -144,6 +173,7 @@ manualBtn.addEventListener("click", () => {
 
 fieldImage.addEventListener("input", () => {
   setPreviewImage(fieldImage.value.trim());
+  setImagePosition("50% 50%");
 });
 
 function enterEditMode(game) {
@@ -151,6 +181,7 @@ function enterEditMode(game) {
   currentAppData = { steamUrl: game.steamUrl, dateSortieRaw: game.dateSortieRaw };
   steamUrlInput.value = game.steamUrl;
   setPreviewImage(game.image);
+  setImagePosition(game.imagePosition || "50% 50%");
   fieldTitre.value = game.titre;
   fieldNote.value = game.note;
   fieldImage.value = game.image;
@@ -168,6 +199,7 @@ function enterEditMode(game) {
 function exitEditMode() {
   editingId = null;
   currentAppData = null;
+  currentImagePosition = "50% 50%";
   steamUrlInput.value = "";
   preview.classList.add("hidden");
   addBtn.textContent = "Ajouter au classement";
@@ -195,6 +227,7 @@ addBtn.addEventListener("click", async () => {
     titre: fieldTitre.value.trim(),
     steamUrl: steamUrlInput.value.trim(),
     image: fieldImage.value.trim(),
+    imagePosition: currentImagePosition,
     note,
     genre: fieldGenre.value.trim(),
     dateSortie: fieldDate.value.trim(),

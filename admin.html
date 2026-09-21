@@ -45,7 +45,14 @@
       </div>
 
       <div id="preview" class="preview hidden">
-        <img id="preview-image" class="preview-image" alt="" />
+        <div id="image-picker" class="image-picker">
+          <img id="preview-image" class="preview-image" alt="" />
+          <div id="focal-marker" class="focal-marker hidden"></div>
+        </div>
+        <div class="image-picker-hint">
+          Clique sur l'image pour choisir la partie à garder visible dans la vignette (utile quand un titre est coupé sur le côté).
+          <button id="reset-position-btn" class="ghost-btn ghost-btn-inline">Recentrer</button>
+        </div>
         <div class="preview-fields">
           <div class="field">
             <label for="field-titre">Titre</label>

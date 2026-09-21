@@ -15,6 +15,14 @@ function slugify(str) {
   );
 }
 
+// N'accepte que "NN% NN%" (0-100) — la valeur finit dans un attribut style= côté client.
+function sanitizeImagePosition(value) {
+  if (typeof value === "string" && /^(100|[1-9]?[0-9])% (100|[1-9]?[0-9])%$/.test(value.trim())) {
+    return value.trim();
+  }
+  return "50% 50%";
+}
+
 export default async function handler(req, res) {
   if (req.method === "GET") {
     const games = (await kv.get("games")) ?? SEED_GAMES;
@@ -40,6 +48,7 @@ export default async function handler(req, res) {
       titre: body.titre,
       steamUrl: body.steamUrl || "",
       image: body.image || "",
+      imagePosition: sanitizeImagePosition(body.imagePosition),
       note: body.note,
       genre: body.genre || "",
       dateSortie: body.dateSortie || "",
@@ -75,6 +84,7 @@ export default async function handler(req, res) {
       titre: body.titre ?? games[index].titre,
       steamUrl: body.steamUrl ?? games[index].steamUrl,
       image: body.image ?? games[index].image,
+      imagePosition: body.imagePosition ? sanitizeImagePosition(body.imagePosition) : games[index].imagePosition,
       note: typeof body.note === "number" ? body.note : games[index].note,
       genre: body.genre ?? games[index].genre,
       dateSortie: body.dateSortie ?? games[index].dateSortie,

@@ -8,10 +8,10 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-function noteClass(note) {
-  if (note >= 15) return "high";
-  if (note >= 10) return "mid";
-  return "low";
+function noteColor(note) {
+  const pct = Math.max(0, Math.min(1, note / 20));
+  const hue = pct * 130; // 0 = rouge, ~65 = orange/jaune, 130 = vert
+  return `hsl(${hue.toFixed(0)}, 75%, 55%)`;
 }
 
 function rankClass(index) {
@@ -35,14 +35,19 @@ function render(games) {
     return;
   }
 
+  const maxNote = Math.max(...games.map((g) => g.note));
+
   grid.innerHTML = games
-    .map((game, i) => `
+    .map((game, i) => {
+      const isBest = game.note === maxNote;
+      const position = escapeHtml(game.imagePosition || "50% 50%");
+      return `
       <article class="card">
         <div class="rank ${rankClass(i)}">${i + 1}</div>
         <div class="cover-wrap">
           ${
             game.image
-              ? `<img class="cover" src="${escapeHtml(game.image)}" alt="${escapeHtml(game.titre)}" loading="lazy" />`
+              ? `<img class="cover" src="${escapeHtml(game.image)}" alt="${escapeHtml(game.titre)}" style="object-position: ${position}" loading="lazy" />`
               : `<div class="cover cover-placeholder">${escapeHtml((game.titre || "?").charAt(0).toUpperCase())}</div>`
           }
           <div class="cover-fade"></div>
@@ -55,7 +60,7 @@ function render(games) {
           </div>
           ${game.description ? `<p class="description">${escapeHtml(game.description)}</p>` : ""}
           <div class="card-footer">
-            <div class="note ${noteClass(game.note)}">${Number(game.note).toFixed(1)}<small>/20 chat</small></div>
+            <div class="note ${isBest ? "note-best" : ""}" style="${isBest ? "" : `color: ${noteColor(game.note)}`}">${isBest ? "★ " : ""}${Number(game.note).toFixed(1)}<small>/20 chat</small></div>
             ${
               game.steamUrl
                 ? `<a class="steam-link" href="${escapeHtml(game.steamUrl)}" target="_blank" rel="noopener">${linkLabel(game.steamUrl)}</a>`
@@ -64,7 +69,8 @@ function render(games) {
           </div>
         </div>
       </article>
-    `)
+    `;
+    })
     .join("");
 }
 

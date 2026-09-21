@@ -6,6 +6,7 @@ const SEED_GAMES = [
     titre: "Withering Realms",
     steamUrl: "https://store.steampowered.com/app/3441990/Withering_Realms/",
     image: "images/withering-realms.jpg",
+    imagePosition: "50% 50%",
     note: 14.8,
     genre: "Action RPG, Horreur",
     dateSortie: "4 sept. 2026",

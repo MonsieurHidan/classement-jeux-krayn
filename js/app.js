@@ -14,7 +14,8 @@ function noteColor(note) {
   return `hsl(${hue.toFixed(0)}, 75%, 55%)`;
 }
 
-function rankClass(index) {
+function rankClass(index, mode) {
+  if (mode !== "note") return "";
   if (index === 0) return "gold";
   if (index === 1) return "silver";
   if (index === 2) return "bronze";
@@ -36,7 +37,7 @@ function linkMeta(url) {
   }
 }
 
-function render(games) {
+function render(games, mode) {
   if (!games.length) {
     grid.innerHTML = `<p class="empty">Aucun jeu ajouté pour le moment.</p>`;
     return;
@@ -50,7 +51,7 @@ function render(games) {
       const position = escapeHtml(game.imagePosition || "50% 50%");
       return `
       <article class="card">
-        <div class="rank ${rankClass(i)}">${i + 1}</div>
+        <div class="rank ${rankClass(i, mode)}">${i + 1}</div>
         <div class="cover-wrap">
           ${
             game.image
@@ -96,7 +97,7 @@ function sortGames(mode) {
   if (mode === "note") games.sort((a, b) => b.note - a.note);
   if (mode === "date") games.sort((a, b) => new Date(b.dateSortieRaw || 0) - new Date(a.dateSortieRaw || 0));
   if (mode === "az") games.sort((a, b) => a.titre.localeCompare(b.titre));
-  render(games);
+  render(games, mode);
 }
 
 buttons.forEach((btn) => {

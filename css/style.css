@@ -213,9 +213,9 @@ main {
   z-index: 2;
 }
 
-.rank.gold { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 14px rgba(245, 197, 66, 0.4); }
-.rank.silver { border-color: var(--silver); color: var(--silver); box-shadow: 0 0 14px rgba(215, 221, 229, 0.25); }
-.rank.bronze { border-color: var(--bronze); color: var(--bronze); box-shadow: 0 0 14px rgba(224, 149, 92, 0.3); }
+.rank.gold { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 14px rgba(245, 197, 66, 0.4); border-width: thick; }
+.rank.silver { border-color: var(--silver); color: var(--silver); box-shadow: 0 0 14px rgba(215, 221, 229, 0.25); border-width: thick; }
+.rank.bronze { border-color: var(--bronze); color: var(--bronze); box-shadow: 0 0 14px rgba(224, 149, 92, 0.3); border-width: thick; }
 
 .cover-wrap {
   position: relative;
